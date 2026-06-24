@@ -1,78 +1,96 @@
-window.HELP_IMPROVE_VIDEOJS = false;
+(() => {
+  const tasks = {
+    Pushing: {
+      label: 'Pushing',
+      description: 'Press bread into a toaster by executing contact-rich object displacement.',
+      real: './static/videos/demos/Pushing/real.mp4',
+      synthetic: './static/videos/demos/Pushing/synthetic.mp4'
+    },
+    Insertion: {
+      label: 'Insertion',
+      description: 'Insert a shaped block into its corresponding slot through precise alignment and contact.',
+      real: './static/videos/demos/Insertion/real.mp4',
+      synthetic: './static/videos/demos/Insertion/synthetic.mp4'
+    },
+    Sorting: {
+      label: 'Sorting',
+      description: 'Identify and pick the target object from a plate containing distractors.',
+      real: './static/videos/demos/Sorting/real.mp4',
+      synthetic: './static/videos/demos/Sorting/synthetic.mp4'
+    },
+    'pick-place': {
+      label: 'Pick & Place',
+      description: 'Grasp the target object and place it into the designated container.',
+      real: './static/videos/demos/pick-place/real.mp4',
+      synthetic: './static/videos/demos/pick-place/synthetic.mp4'
+    },
+    Assembly: {
+      label: 'Assembly',
+      description: 'Complete a long-horizon Tower-of-Hanoi assembly operation.',
+      real: './static/videos/demos/Assembly/real.mp4',
+      synthetic: './static/videos/demos/Assembly/synthetic.mp4'
+    }
+  };
 
-var INTERP_BASE = "./static/interpolation/stacked";
-var NUM_INTERP_FRAMES = 240;
+  const navToggle = document.querySelector('.nav-toggle');
+  const navLinks = document.querySelector('.nav-links');
+  const heroVideo = document.querySelector('#hero-video');
+  const realVideo = document.querySelector('#real-video');
+  const syntheticVideo = document.querySelector('#synthetic-video');
+  const realSource = document.querySelector('#real-video-source');
+  const syntheticSource = document.querySelector('#synthetic-video-source');
+  const taskTitle = document.querySelector('#demo-task-title');
+  const taskDescription = document.querySelector('#demo-task-description');
+  const taskButtons = [...document.querySelectorAll('.task-tab')];
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-var interp_images = [];
-function preloadInterpolationImages() {
-  for (var i = 0; i < NUM_INTERP_FRAMES; i++) {
-    var path = INTERP_BASE + '/' + String(i).padStart(6, '0') + '.jpg';
-    interp_images[i] = new Image();
-    interp_images[i].src = path;
-  }
-}
+  const playSilently = (video) => {
+    if (!video || reduceMotion.matches) return;
+    const result = video.play();
+    if (result && typeof result.catch === 'function') result.catch(() => {});
+  };
 
-function setInterpolationImage(i) {
-  var image = interp_images[i];
-  image.ondragstart = function() { return false; };
-  image.oncontextmenu = function() { return false; };
-  $('#interpolation-image-wrapper').empty().append(image);
-}
+  const updateVideoSource = (video, source, path) => {
+    video.pause();
+    source.src = path;
+    video.load();
+    video.addEventListener('canplay', () => playSilently(video), { once: true });
+  };
 
+  const setTask = (taskId) => {
+    const task = tasks[taskId];
+    if (!task) return;
 
-$(document).ready(function() {
-    // Check for click events on the navbar burger icon
-    $(".navbar-burger").click(function() {
-      // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
-      $(".navbar-burger").toggleClass("is-active");
-      $(".navbar-menu").toggleClass("is-active");
-
+    taskTitle.textContent = task.label;
+    taskDescription.textContent = task.description;
+    taskButtons.forEach((button) => {
+      const selected = button.dataset.task === taskId;
+      button.classList.toggle('is-active', selected);
+      button.setAttribute('aria-pressed', String(selected));
     });
+    updateVideoSource(realVideo, realSource, task.real);
+    updateVideoSource(syntheticVideo, syntheticSource, task.synthetic);
+  };
 
-    var options = {
-			slidesToScroll: 1,
-			slidesToShow: 3,
-			loop: true,
-			infinite: true,
-			autoplay: false,
-			autoplaySpeed: 3000,
-    }
+  taskButtons.forEach((button) => button.addEventListener('click', () => setTask(button.dataset.task)));
 
-		// Initialize all div with carousel class
-    var carousels = bulmaCarousel.attach('.carousel', options);
+  navToggle?.addEventListener('click', () => {
+    const expanded = navToggle.getAttribute('aria-expanded') === 'true';
+    navToggle.setAttribute('aria-expanded', String(!expanded));
+    navLinks?.classList.toggle('is-open', !expanded);
+  });
 
-    // Loop on each carousel initialized
-    for(var i = 0; i < carousels.length; i++) {
-    	// Add listener to  event
-    	carousels[i].on('before:show', state => {
-    		console.log(state);
-    	});
-    }
+  navLinks?.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => {
+    navToggle?.setAttribute('aria-expanded', 'false');
+    navLinks.classList.remove('is-open');
+  }));
 
-    // Access to bulmaCarousel instance of an element
-    var element = document.querySelector('#my-element');
-    if (element && element.bulmaCarousel) {
-    	// bulmaCarousel instance is available as element.bulmaCarousel
-    	element.bulmaCarousel.on('before-show', function(state) {
-    		console.log(state);
-    	});
-    }
+  const setMotionPreference = () => {
+    if (!heroVideo) return;
+    if (reduceMotion.matches) heroVideo.pause();
+    else playSilently(heroVideo);
+  };
 
-    /*var player = document.getElementById('interpolation-video');
-    player.addEventListener('loadedmetadata', function() {
-      $('#interpolation-slider').on('input', function(event) {
-        console.log(this.value, player.duration);
-        player.currentTime = player.duration / 100 * this.value;
-      })
-    }, false);*/
-    preloadInterpolationImages();
-
-    $('#interpolation-slider').on('input', function(event) {
-      setInterpolationImage(this.value);
-    });
-    setInterpolationImage(0);
-    $('#interpolation-slider').prop('max', NUM_INTERP_FRAMES - 1);
-
-    bulmaSlider.attach();
-
-})
+  setMotionPreference();
+  reduceMotion.addEventListener?.('change', setMotionPreference);
+})();
