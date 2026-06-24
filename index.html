@@ -60,8 +60,8 @@
 
         <div class="button-row" aria-label="Project links">
           <a class="button button-primary" href="./static/pdfs/worldsample-preprint.pdf" target="_blank" rel="noreferrer"><span aria-hidden="true">↗</span> Paper</a>
-          <a class="button" href="https://github.com/xxReinsno/WorldSample" target="_blank" rel="noreferrer"><span aria-hidden="true">⌘</span> RL Framework</a>
-          <a class="button" href="https://github.com/xxReinsno/cosmos-WS" target="_blank" rel="noreferrer"><span aria-hidden="true">⌘</span> World Model</a>
+          <a class="button" href="https://github.com/xxReinsno/WS-RL" target="_blank" rel="noreferrer"><span aria-hidden="true">⌘</span> RL Framework</a>
+          <a class="button" href="https://github.com/xxReinsno/WS-cosmos" target="_blank" rel="noreferrer"><span aria-hidden="true">⌘</span> World Model</a>
           <a class="button" href="https://xxreinsno.github.io/" target="_blank" rel="noreferrer"><span aria-hidden="true">↗</span> Homepage</a>
         </div>
       </div>
@@ -82,7 +82,7 @@
 
     <section class="section-shell overview-section">
       <div class="section-heading narrow-heading">
-        <p class="eyebrow"><span></span> The problem</p>
+        <p class="eyebrow"><span></span> Motivation</p>
         <h2>Every physical rollout is expensive. It should yield more than one trajectory.</h2>
       </div>
       <div class="overview-grid">
@@ -124,7 +124,7 @@
           <ul>
             <li>Q-aware sample selection</li>
             <li>Uncertainty-guided data scheduling</li>
-            <li>Maximum synthetic ratio capped at 30%</li>
+            <li>Stabilized policy training with high sample efficiency</li>
           </ul>
         </article>
       </div>
@@ -158,7 +158,7 @@
 
     <section class="section-shell demos-section" id="demos" aria-labelledby="demos-title">
       <div class="section-heading">
-        <p class="eyebrow"><span></span> Side-view rollouts</p>
+        <p class="eyebrow"><span></span> rollout data</p>
         <h2 id="demos-title">Compare reality with the generated future.</h2>
         <p>Each pair is conditioned on the same task setting. Select a task to inspect the physical rollout beside its world-model-generated counterpart.</p>
       </div>
@@ -169,31 +169,57 @@
         <button class="task-tab" type="button" data-task="pick-place" aria-pressed="false">Pick &amp; Place</button>
         <button class="task-tab" type="button" data-task="Assembly" aria-pressed="false">Assembly</button>
       </div>
-      <div class="demo-meta"><span class="live-dot" aria-hidden="true"></span><strong id="demo-task-title">Pushing</strong><span id="demo-task-description">Press bread into a toaster by executing contact-rich object displacement.</span></div>
+      <div class="view-tabs" role="toolbar" aria-label="Select a camera view">
+        <span>Camera view</span>
+        <button class="view-tab is-active" type="button" data-view="side" aria-pressed="true">Side view</button>
+        <button class="view-tab" type="button" data-view="wrist" aria-pressed="false">Wrist view</button>
+      </div>
+      <div class="demo-meta"><span class="live-dot" aria-hidden="true"></span><strong id="demo-task-title">Pushing</strong><span id="demo-view-title">Side-camera comparison</span><span id="demo-task-description">Press bread into a toaster by executing contact-rich object displacement.</span></div>
       <div class="demo-pair">
         <figure class="demo-video-card real-video-card">
           <div class="video-label"><span>PHYSICAL</span><span>REAL ROLLOUT</span></div>
-          <video id="real-video" controls muted loop playsinline preload="metadata" aria-describedby="demo-task-description">
+          <video id="real-video" autoplay controls muted loop playsinline preload="metadata" poster="./static/images/tasks/pushing.jpg" aria-describedby="demo-task-description">
             <source id="real-video-source" src="./static/videos/demos/Pushing/real.mp4" type="video/mp4">
           </video>
         </figure>
         <div class="demo-divider" aria-hidden="true"><span>→</span><small>same task<br>context</small></div>
         <figure class="demo-video-card synthetic-video-card">
           <div class="video-label"><span>SYNTHETIC</span><span>WORLD-MODEL ROLLOUT</span></div>
-          <video id="synthetic-video" controls muted loop playsinline preload="metadata" aria-describedby="demo-task-description">
+          <video id="synthetic-video" autoplay controls muted loop playsinline preload="metadata" poster="./static/images/tasks/pushing.jpg" aria-describedby="demo-task-description">
             <source id="synthetic-video-source" src="./static/videos/demos/Pushing/synthetic.mp4" type="video/mp4">
           </video>
         </figure>
       </div>
     </section>
 
-    <section class="section-shell settings-section" aria-label="Experimental setup">
-      <div class="settings-copy">
-        <p class="eyebrow"><span></span> Experimental setting</p>
-        <h2>Five task categories. One real-robot platform.</h2>
+    <section class="section-shell settings-section" aria-labelledby="settings-title">
+        <div class="settings-copy">
+          <p class="eyebrow"><span></span> Experimental setting</p>
+        <h2 id="settings-title">Five task categories. One real-robot platform.</h2>
         <p>We evaluate on a Galaxea A1X robot arm with a binary gripper, using side-view and wrist-mounted Intel RealSense D435i cameras. The tasks cover contact-rich interaction, precision alignment, visual discrimination, grasping, and long-horizon assembly.</p>
       </div>
-      <img src="./static/images/worldsample-task-settings.png" alt="Real-world task settings for pushing, insertion, sorting, pick and place, and assembly." loading="lazy">
+      <div class="task-gallery" aria-label="Real-robot task settings">
+        <figure class="task-image task-image-wide">
+          <img src="./static/images/tasks/pushing.jpg" alt="Robot pressing bread into a toaster for the pushing task." loading="lazy">
+          <figcaption>Pushing <span>contact-rich displacement</span></figcaption>
+        </figure>
+        <figure class="task-image">
+          <img src="./static/images/tasks/insertion.jpg" alt="Robot aligning a block with an insertion slot." loading="lazy">
+          <figcaption>Insertion <span>precise contact</span></figcaption>
+        </figure>
+        <figure class="task-image">
+          <img src="./static/images/tasks/sorting.jpg" alt="Robot sorting the target object from distractors." loading="lazy">
+          <figcaption>Sorting <span>visual discrimination</span></figcaption>
+        </figure>
+        <figure class="task-image">
+          <img src="./static/images/tasks/pick-place.jpg" alt="Robot grasping and placing an object into a target container." loading="lazy">
+          <figcaption>Pick &amp; Place <span>grasp and place</span></figcaption>
+        </figure>
+        <figure class="task-image">
+          <img src="./static/images/tasks/assembly.jpg" alt="Robot completing a Tower-of-Hanoi assembly task." loading="lazy">
+          <figcaption>Assembly <span>long-horizon precision</span></figcaption>
+        </figure>
+      </div>
     </section>
 
     <section class="section-shell resources-section" id="resources" aria-labelledby="resources-title">
@@ -203,8 +229,8 @@
       </div>
       <div class="resource-grid">
         <a class="resource-card" href="./static/pdfs/worldsample-preprint.pdf" target="_blank" rel="noreferrer"><span class="resource-icon">PDF</span><span><strong>Preprint</strong><small>WorldSample · June 2026</small></span><b aria-hidden="true">↗</b></a>
-        <a class="resource-card" href="https://github.com/xxReinsno/WorldSample" target="_blank" rel="noreferrer"><span class="resource-icon">RL</span><span><strong>RL Framework</strong><small>Online real-robot learning framework</small></span><b aria-hidden="true">↗</b></a>
-        <a class="resource-card" href="https://github.com/xxReinsno/cosmos-WS" target="_blank" rel="noreferrer"><span class="resource-icon">WM</span><span><strong>World Model</strong><small>Cosmos-based training framework</small></span><b aria-hidden="true">↗</b></a>
+        <a class="resource-card" href="https://github.com/xxReinsno/WS-RL" target="_blank" rel="noreferrer"><span class="resource-icon">RL</span><span><strong>RL Framework</strong><small>Online real-robot learning framework</small></span><b aria-hidden="true">↗</b></a>
+        <a class="resource-card" href="https://github.com/xxReinsno/WS-cosmos" target="_blank" rel="noreferrer"><span class="resource-icon">WM</span><span><strong>World Model</strong><small>Cosmos-based training framework</small></span><b aria-hidden="true">↗</b></a>
       </div>
     </section>
 
